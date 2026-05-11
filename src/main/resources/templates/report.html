@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Low Stock Alert Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .navbar { margin-bottom: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .card { border-radius: 15px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); border: none; border-top: 5px solid #dc3545;}
+        .table th { background-color: #343a40; color: white; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">Inventory System</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="/products">Products</a></li>
+                <li class="nav-item"><a class="nav-link" href="/suppliers">Suppliers</a></li>
+                <li class="nav-item"><a class="nav-link" href="/shipments">Shipments</a></li>
+                <li class="nav-item"><a class="nav-link text-warning" href="/restock">Restock</a></li>
+                <li class="nav-item"><a class="nav-link active text-danger fw-bold" href="/report">Reports</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h2 class="text-danger m-0"><span class="badge bg-danger rounded-pill">ALERT</span> Low Stock Report</h2>
+                    <button class="btn btn-outline-secondary" onclick="window.print()">Print Report</button>
+                </div>
+
+                <p class="text-muted">This report displays all products where the current stock level has fallen below the defined minimum threshold.</p>
+
+                <table class="table table-bordered table-hover mt-3" id="report-table">
+                    <thead class="table-dark">
+                    <tr>
+                        <th>Product ID</th>
+                        <th>Product Name</th>
+                        <th>Current Stock</th>
+                        <th>Minimum Threshold</th>
+                        <th>Deficit</th>
+                        <th>Max Capacity</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="product : ${lowStockProducts}" class="table-danger">
+                        <td th:text="${product.id}"></td>
+                        <td class="fw-bold" th:text="${product.name}"></td>
+                        <td><span class="badge bg-danger fs-6" th:text="${product.stockLevel}"></span></td>
+                        <td th:text="${product.minThreshold}"></td>
+                        <td class="text-danger fw-bold" th:text="${product.stockLevel - product.minThreshold}"></td>
+                        <td th:text="${product.maxCapacity}"></td>
+                        <td>
+                            <a href="/restock" class="btn btn-sm btn-primary">Restock Now</a>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(lowStockProducts)}">
+                        <td colspan="7" class="text-center text-success fw-bold p-4">
+                            All product inventory levels are healthy. No items are below minimum thresholds.
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
